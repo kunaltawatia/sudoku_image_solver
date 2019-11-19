@@ -14,10 +14,17 @@ def compute_boxno(i,j):
 	return hor*3+ver 
 
 def add_entry(x,y,i):
+	boxno = compute_boxno(y,x) 
+	if((restric_ver[x] & 1<<i) > 0):
+		return 1
+	if((restric_hor[y] & 1<<i) > 0):
+		return 1
+	if((restric_box[boxno] & 1<<i) > 0):
+		return 1
 	restric_ver[x]|= 1<<i
 	restric_hor[y]|= 1<<i 
-	boxno = compute_boxno(y,x) 
 	restric_box[boxno] |= 1<<i 
+	return 0
 
 def remove_entry(x,y,i):
 	boxno=compute_boxno(y,x) 
@@ -27,7 +34,7 @@ def remove_entry(x,y,i):
   
 
 def display_solution():
-	print mat
+	print mat.tolist()
 	exit()
 
 def count(x):
@@ -85,7 +92,13 @@ def start_solving(sudoku):
 		for j in range (0,9):
 			if (sudoku[i][j]):
 				mat[i][j]=sudoku[i][j]
-				add_entry(j,i,int(mat[i][j]-1))
+
+	for i in range (0,9):
+		for j in range (0,9):
+			if (sudoku[i][j]):
+				if (add_entry(j,i,int(mat[i][j]-1))):
+					display_solution()
+					exit()
 
 	solve_sudoku()
 

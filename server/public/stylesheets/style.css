@@ -1,0 +1,36 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+td {
+  padding-top : 5px;
+  padding-bottom : 5px;
+  padding-left : 10px;
+  padding-right : 10px;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;} 
+td:nth-child(even) {background-color: #f2f2f2;} 
+tr:nth-child(even) td:nth-child(even) {background-color:white;} 
+
+img {
+  height: 382px;
+  object-fit: contain;
+}
+
+div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}

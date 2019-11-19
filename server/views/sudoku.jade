@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1= title
+  div
+    table
+        tbody
+            each line in sudoku
+                tr
+                    each number in line
+                        td #{number}
+    img(src=imagesrc, alt="sudoku")  

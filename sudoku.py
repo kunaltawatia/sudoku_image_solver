@@ -7,13 +7,13 @@ import operator
 #######   training part    ############### 
 sudoku = np.zeros((9,9))
 model = cv2.ml.KNearest_create()
-print('Started training model...')
+# print('Started training model...')
 for i in range (2,6):
 	samples   = np.loadtxt('train/generalsamples'+str(i)+'.data',np.float32)
 	responses = np.loadtxt('train/generalresponses'+str(i)+'.data',np.float32)
 	responses = responses.reshape((responses.size,1))
 	model.train(samples,cv2.ml.ROW_SAMPLE,responses)
-print('Model trained.')
+# print('Model trained.')
 
 ####### sudoku extraction part ###########
 def check_square(x,y,h):
@@ -58,12 +58,16 @@ def ocr_start(contours,im):
 						square = check_square(x+w/2,y+h/2,height)
 						sudoku [square[1]][square[0]]=results[0][0]
 
+def show_image(img):
+	cv2.imshow("image",img)
+	cv2.waitKey(0)
+	return
 
 def distance(a, b):
 		return np.sqrt( ((a[0] - b[0]) **2) + ((a[1] - b[1]) **2) )
 
 def extract_contour(image):
-		contours, h = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+		_, contours, h = cv2.findContours(image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 		return contours
 
 def CutoutMaxContour(image):
@@ -99,7 +103,7 @@ def preprocess(image):
 	image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
 
 	blur=len(image)/100
-	blur = blur+(blur+1)%2;
+	blur = blur+(blur+1)%2
 	image = cv2.GaussianBlur(image,(blur,blur), 0)
 
 	image = 255 - cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
@@ -107,23 +111,29 @@ def preprocess(image):
 
 	return image
 	
+def _print(raw):
+	for line in raw:
+		for i in line:
+			print(int(i))
+	return
 
 def main():
-		if len(sys.argv) != 2:
-			print('Execution style: python sudoku.py sample/image1.jpg')
-			return
-		img = cv2.imread(sys.argv[1])
-		preprocessed_image = preprocess(img)
+	if len(sys.argv) != 2:
+		print('Execution style: python sudoku.py sample/image1.jpg')
+		return
+	img = cv2.imread(sys.argv[1])
 
-		sudoku_corners = CutoutMaxContour(preprocessed_image)
+	preprocessed_image = preprocess(img)
+	
+	sudoku_corners = CutoutMaxContour(preprocessed_image)
 
-		sudoku_img = Linear_transform_image(img, sudoku_corners)
+	sudoku_img = Linear_transform_image(img, sudoku_corners)
 
-		sudoku_img = preprocess(sudoku_img)
+	sudoku_img = preprocess(sudoku_img)
 
-		ocr_start(extract_contour(sudoku_img) ,sudoku_img)
-		
-		sudoku_solver.start_solving(sudoku)
+	ocr_start(extract_contour(sudoku_img) ,sudoku_img)
+	
+	sudoku_solver.start_solving(sudoku)
 
 
 if __name__ == '__main__':
